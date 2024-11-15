@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fisch Simulator Game</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #00c6ff, #0072ff); /* พื้นหลังไล่สี */
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .button {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background-color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #0072ff;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .button:hover {
+            transform: scale(1.2);
+            background-color: #00c6ff;
+            color: white;
+        }
+
+        .scoreboard {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #0072ff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .timer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #0072ff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="scoreboard">Score: <span id="score">0</span></div>
+    <div class="timer">Time: <span id="time">60</span> sec</div>
+    <button class="button" onclick="moveButton(event)">Shake</button>
+
+    <script>
+        let score = 0;
+        let timeLeft = 60; // กำหนดเวลาสิ้นสุด 30 วินาที
+        const scoreElement = document.getElementById('score');
+        const timeElement = document.getElementById('time');
+        const button = document.querySelector('.button');
+
+        // เพิ่ม Event Listener สำหรับคลิกนอกปุ่ม
+        document.body.addEventListener('click', (e) => {
+            if (!e.target.classList.contains('button')) {
+                score--;
+                score = Math.max(score, 0); // ไม่ให้คะแนนติดลบ
+                scoreElement.textContent = score;
+            }
+        });
+
+        function moveButton() {
+            // เพิ่มคะแนนเมื่อกดปุ่ม
+            score++;
+            scoreElement.textContent = score;
+
+            // คำนวณตำแหน่งแบบสุ่ม
+            const maxWidth = window.innerWidth - button.offsetWidth;
+            const maxHeight = window.innerHeight - button.offsetHeight;
+            const randomX = Math.random() * maxWidth;
+            const randomY = Math.random() * maxHeight;
+
+            // ย้ายปุ่มไปยังตำแหน่งใหม่
+            button.style.left = `${randomX}px`;
+            button.style.top = `${randomY}px`;
+        }
+
+        function startTimer() {
+            const timer = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    timeElement.textContent = timeLeft;
+                } else {
+                    clearInterval(timer);
+                    button.disabled = true; // ปิดการใช้งานปุ่มเมื่อหมดเวลา
+                    showFinalMessage();
+                }
+            }, 1000); // ลดเวลาทุก 1 วินาที
+        }
+
+        function showFinalMessage() {
+            let message;
+            if (score > 100) {
+                message = "พระเจ้ามึงโครตเก่ง!";
+            } else if (score >= 80) {
+                message = "ใช้ได้ใช้ได้!";
+            } else if (score >= 60) {
+                message = "ลองพยายามมากกว่านี้ดู!";
+            } else if (score >= 30) {
+                message = "มึงไปเล่นใหม่ไป!";
+            } else {
+                message = "มึงไปเล่นใหม่ไป!";
+            }
+            alert(`Time's up! Your final score is ${score}. ${message}`);
+        }
+
+        // เริ่มจับเวลาเมื่อโหลดหน้าเว็บ
+        startTimer();
+    </script>
+</body>
+</html>
